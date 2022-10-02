@@ -30,7 +30,7 @@ class SchemaProvider:
         self.games_schema = GamesSchema(json_data=json.load(open(self.cp.project_root + "/schemas/games.json")))
 
     def get_platforms_schema(self):
-        return self.platforms_schema
+        return self.platforms_schema.get_json()
 
     def get_games_schema(self):
-        return self.games_schema
+        return self.games_schema.get_json()
