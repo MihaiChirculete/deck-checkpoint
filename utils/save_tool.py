@@ -4,7 +4,6 @@ from typing import List
 import stat
 import errno
 
-
 from paramiko import SFTPClient
 from utils.providers import ConfigProvider, SchemaProvider
 
@@ -39,15 +38,15 @@ class SaveTool:
             if game_schema:
                 print(f"Found schema for app_id {app_id}! Game identified as {gs.get_name_for_app_id(app_id)}")
 
-                remote_saves = [ps.get_saves_root_for_platform("LINUX")\
-                                .replace("{user}", self.cp.deck_user)\
-                                .replace("{app_id}", app_id) + savePath for savePath in
+                remote_saves = [ps.get_saves_root_for_platform("LINUX") \
+                                    .replace("{user}", self.cp.deck_user) \
+                                    .replace("{app_id}", app_id) + savePath for savePath in
                                 gs.get_save_paths_for_app_id(app_id)]
 
-                local_saves = [ps.get_saves_root_for_platform("LINUX")\
-                                .replace("{user}", pwd.getpwuid(os.getuid())[0])\
-                                .replace("{app_id}", app_id) + savePath for savePath in
-                                gs.get_save_paths_for_app_id(app_id)]
+                local_saves = [ps.get_saves_root_for_platform("LINUX") \
+                                   .replace("{user}", pwd.getpwuid(os.getuid())[0]) \
+                                   .replace("{app_id}", app_id) + savePath for savePath in
+                               gs.get_save_paths_for_app_id(app_id)]
 
                 save_pairs = list(zip(remote_saves, local_saves))
 
@@ -70,7 +69,6 @@ class SaveTool:
             else:
                 if not os.path.isfile(os.path.join(local_path, filename)):
                     self.client.get(remote_path + filename, os.path.join(local_path, filename))
-
 
     def push_save_file(self, local_path, remote_path):
         self.client.put(local_path, remote_path)
