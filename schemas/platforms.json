@@ -1,10 +1,16 @@
-[
-  {
-    "platform": "LINUX",
-    "savesRoot": "/home/{user}/.steam/root/steamapps/compatdata/{app_id}/pfx/drive_c/users/steamuser"
+{
+  "schema": {
+    "name": "Platforms Schema",
+    "desc": "This schema stores platform related configurations"
   },
-  {
-    "platform": "WINDOWS",
-    "savesRoot": "C:/Users/{user}"
-  }
-]
+  "platforms": [
+    {
+      "platform": "LINUX",
+      "savesRoot": "/home/{user}/.steam/root/steamapps/compatdata/{app_id}/pfx/drive_c/users/steamuser"
+    },
+    {
+      "platform": "WINDOWS",
+      "savesRoot": "C:/Users/{user}"
+    }
+  ]
+}
