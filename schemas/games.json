@@ -6,7 +6,7 @@
   "games": [
     {
       "appId": null,
-      "gameName": "UNIDENTIFIED_GAME",
+      "gameName": "UNIDENTIFIED_GAME_SCHEMA",
       "savePaths": [
         "/My Documents/",
         "/Saved Games/"
