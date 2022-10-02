@@ -29,6 +29,9 @@ class PlatformsSchema(ParsedSchemaBase):
 
         return None
 
+    def get_saves_root_for_platform(self, platform_name: str):
+        return str(self.get_schema_for_platform(platform_name=platform_name)["savesRoot"])
+
 
 class GamesSchema(ParsedSchemaBase):
     def __init__(self, json_data: json):
