@@ -1,0 +1,10 @@
+[
+  {
+    "platform": "LINUX",
+    "savesRoot": "/home/{user}/.steam/root/steamapps/compatdata/{app_id}/pfx/drive_c/users/steamuser"
+  },
+  {
+    "platform": "WINDOWS",
+    "savesRoot": "C:/Users/{user}"
+  }
+]
