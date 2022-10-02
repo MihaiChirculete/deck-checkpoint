@@ -1,4 +1,9 @@
+import os
+import pwd
 from typing import List
+import stat
+import errno
+
 
 from paramiko import SFTPClient
 from utils.providers import ConfigProvider, SchemaProvider
@@ -17,32 +22,55 @@ class SaveTool:
         self.remote_appids = self.client.listdir(f"/home/{self.cp.deck_user}/.steam/root/steamapps/compatdata/")
         return self.remote_appids
 
-    def prepare_local_structure(self):
+    def pull_remote_saves(self):
         """
-        Prepares local directories corresponding to remote ones.
+        Pulls remote saves based on definde schemas
         :return:
         """
         if len(self.remote_appids) < 1:
             return 1
 
-        games_schema = self.sp.get_games_schema()["games"]
+        gs = self.sp.get_games_schema()
+        ps = self.sp.get_platforms_schema()
 
         for app_id in self.remote_appids:
-            found_schema = False
             # Search the games schema for this appId
-            for game in games_schema:
-                if game["appId"] == str(app_id):
-                    found_schema = True
-                    print(f"Found schema for app_id {app_id}! Game identified as {game['gameName']}")
-                    break
+            game_schema = gs.get_schema_for_app_id(app_id)
+            if game_schema:
+                print(f"Found schema for app_id {app_id}! Game identified as {gs.get_name_for_app_id(app_id)}")
 
-            if found_schema is False:
-                print(f"Unable to identify app_id {app_id}! Falling back to {games_schema[0]['gameName']}")
+                remote_saves = [ps.get_saves_root_for_platform("LINUX")\
+                                .replace("{user}", self.cp.deck_user)\
+                                .replace("{app_id}", app_id) + savePath for savePath in
+                                gs.get_save_paths_for_app_id(app_id)]
+
+                local_saves = [ps.get_saves_root_for_platform("LINUX")\
+                                .replace("{user}", pwd.getpwuid(os.getuid())[0])\
+                                .replace("{app_id}", app_id) + savePath for savePath in
+                                gs.get_save_paths_for_app_id(app_id)]
+
+                save_pairs = list(zip(remote_saves, local_saves))
+
+                for save_pair in save_pairs:
+                    self.pull_save_files(save_pair[0], save_pair[1])
+
+            else:
+                print(f"Unable to identify app_id {app_id}! Falling back to UNIDENTIFIED_GAME_SCHEMA")
 
         return 0
 
-    def pull_save_file(self, remote_path, local_path):
-        self.client.get(remote_path, local_path)
+    def pull_save_files(self, remote_path, local_path):
+        if not os.path.exists(local_path):
+            os.makedirs(local_path)
+
+        for filename in self.client.listdir(remote_path):
+            if stat.S_ISDIR(self.client.stat(remote_path + filename).st_mode):
+                # uses '/' path delimiter for remote server
+                self.pull_save_files(remote_path + filename + '/', os.path.join(local_path, filename))
+            else:
+                if not os.path.isfile(os.path.join(local_path, filename)):
+                    self.client.get(remote_path + filename, os.path.join(local_path, filename))
+
 
     def push_save_file(self, local_path, remote_path):
         self.client.put(local_path, remote_path)
