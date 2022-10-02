@@ -1,0 +1,24 @@
+[
+  {
+    "appId": null,
+    "gameName": "UNIDENTIFIED_GAME",
+    "savePaths": [
+      "/My Documents/",
+      "/Saved Games/"
+    ],
+    "excludedSavePaths": [
+      "/My Documents/Downloads/",
+      "/My Documents/Music/",
+      "/My Documents/Pictures/",
+      "/My Documents/Templates/",
+      "/My Documents/Videos/"
+    ]
+  },
+  {
+    "appId": "47780",
+    "gameName": "Dead Space 2",
+    "savePaths": [
+      "/My Documents/EA Games/Dead Space 2/"
+    ]
+  }
+]
