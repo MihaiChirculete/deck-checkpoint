@@ -6,6 +6,9 @@ class ParsedSchemaBase:
         self.json_data = json_data
         self.schema_file = None
 
+    def get_json(self):
+        return self.json_data
+
     def get_schema_name(self):
         return str(self.json_data["schema"]["name"])
 
@@ -17,7 +20,14 @@ class PlatformsSchema(ParsedSchemaBase):
     def __init__(self, json_data: json):
         super().__init__(json_data)
 
-    # TO-DO: Add schema specific methods
+    def get_schema_for_platform(self, platform_name: str):
+        platform_name = platform_name.upper()
+
+        for platform in self.json_data["platforms"]:
+            if platform == platform_name:
+                return platform
+
+        return None
 
 
 class GamesSchema(ParsedSchemaBase):
