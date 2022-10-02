@@ -59,3 +59,9 @@ class GamesSchema(ParsedSchemaBase):
 
     def get_excluded_save_paths_for_game_name(self, game_name: str):
         return self.get_schema_for_game_name(game_name)["excludedSavePaths"]
+
+    def get_name_for_app_id(self, app_id: str):
+        return self.get_schema_for_app_id(app_id)["gameName"]
+
+    def get_app_id_for_name(self, game_name: str):
+        return self.get_schema_for_game_name(game_name)["appId"]
