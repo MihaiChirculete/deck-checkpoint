@@ -20,6 +20,13 @@
       ]
     },
     {
+      "appId": "374320",
+      "gameName": "DARK SOULS™ III",
+      "savePaths": [
+        "/AppData/Roaming/DarkSoulsIII"
+      ]
+    },
+    {
       "appId": "47780",
       "gameName": "Dead Space 2",
       "savePaths": [
