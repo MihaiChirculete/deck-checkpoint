@@ -26,11 +26,18 @@ class ConfigProvider:
 class SchemaProvider:
     def __init__(self, config_provider: ConfigProvider):
         self.cp = config_provider
-        self.platforms_schema = PlatformsSchema(json_data=json.load(open(self.cp.project_root + "/schemas/platforms.json")))
+        self.platforms_schema = PlatformsSchema(
+            json_data=json.load(open(self.cp.project_root + "/schemas/platforms.json")))
         self.games_schema = GamesSchema(json_data=json.load(open(self.cp.project_root + "/schemas/games.json")))
 
-    def get_platforms_schema(self):
+    def get_platforms_schema_json(self):
         return self.platforms_schema.get_json()
 
-    def get_games_schema(self):
+    def get_games_schema_json(self):
         return self.games_schema.get_json()
+
+    def get_platforms_schema(self):
+        return self.platforms_schema
+
+    def get_games_schema(self):
+        return self.games_schema
