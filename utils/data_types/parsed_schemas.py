@@ -24,9 +24,8 @@ class PlatformsSchema(ParsedSchemaBase):
         platform_name = platform_name.upper()
 
         for platform in self.json_data["platforms"]:
-            if platform == platform_name:
+            if platform["platform"] == platform_name:
                 return platform
-
         return None
 
     def get_saves_root_for_platform(self, platform_name: str):
@@ -37,4 +36,26 @@ class GamesSchema(ParsedSchemaBase):
     def __init__(self, json_data: json):
         super().__init__(json_data)
 
-    # TO-DO: Add schema specific methods
+    def get_schema_for_app_id(self, app_id: str):
+        for game in self.json_data["games"]:
+            if game["appId"] == app_id:
+                return game
+        return None
+
+    def get_schema_for_game_name(self, game_name: str):
+        for game in self.json_data["games"]:
+            if game["gameName"] == game_name:
+                return game
+        return None
+
+    def get_save_paths_for_app_id(self, app_id: str):
+        return self.get_schema_for_app_id(app_id)["savePaths"]
+
+    def get_save_paths_for_game_name(self, game_name: str):
+        return self.get_schema_for_game_name(game_name)["savePaths"]
+
+    def get_excluded_save_paths_for_app_id(self, app_id: str):
+        return self.get_schema_for_app_id(app_id)["excludedSavePaths"]
+
+    def get_excluded_save_paths_for_game_name(self, game_name: str):
+        return self.get_schema_for_game_name(game_name)["excludedSavePaths"]
