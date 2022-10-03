@@ -43,7 +43,7 @@ class SaveTool:
                                     .replace("{app_id}", app_id) + savePath for savePath in
                                 gs.get_save_paths_for_app_id(app_id)]
 
-                local_saves = [ps.get_saves_root_for_platform("LINUX") \
+                local_saves = [ps.get_saves_root_for_platform(self.cp.local_platform) \
                                    .replace("{user}", pwd.getpwuid(os.getuid())[0]) \
                                    .replace("{app_id}", app_id) + savePath for savePath in
                                gs.get_save_paths_for_app_id(app_id)]
@@ -67,8 +67,14 @@ class SaveTool:
                 # uses '/' path delimiter for remote server
                 self.pull_save_files(remote_path + filename + '/', os.path.join(local_path, filename))
             else:
-                if not os.path.isfile(os.path.join(local_path, filename)):
+                if not os.path.isfile(os.path.join(local_path, filename)) or self.client.stat(
+                        remote_path + filename).st_mtime > os.path.getmtime(os.path.join(local_path, filename)):
+                    print(
+                        f"Remote file {remote_path + filename} is newer than local file {os.path.join(local_path, filename)}, pulling from remote...")
                     self.client.get(remote_path + filename, os.path.join(local_path, filename))
+                else:
+                    print(
+                        f"Remote file {remote_path + filename} is older than local file {os.path.join(local_path, filename)}, keeping local file...")
 
     def push_save_file(self, local_path, remote_path):
         self.client.put(local_path, remote_path)
