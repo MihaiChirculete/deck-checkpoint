@@ -20,7 +20,7 @@ class ConfigProvider:
         self.deck_port = int(config.get("SSH-Section", "deck.port"))
         self.deck_user = str(config.get("SSH-Section", "deck.user"))
         self.deck_pass = str(config.get("SSH-Section", "deck.password"))
-        self.deck_reconnect_delay = int(config.get("SSH-Section", "deck.retry_auth_delay"))
+        self.deck_retry_auth_delay = int(config.get("SSH-Section", "deck.retry_auth_delay"))
 
 
 class SchemaProvider:
