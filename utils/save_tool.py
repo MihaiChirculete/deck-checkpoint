@@ -1,11 +1,12 @@
 import os
 import pwd
+import time
 from typing import List
 import stat
 import errno
-
 from paramiko import SFTPClient
 from utils.providers import ConfigProvider, SchemaProvider
+from utils.interface.display_handler import console
 
 
 class SaveTool:
@@ -33,10 +34,12 @@ class SaveTool:
         ps = self.sp.get_platforms_schema()
 
         for app_id in self.remote_appids:
+            console.rule(f"[bold magenta]Sync-ing save data for AppID [bold blue]{app_id}...")
             # Search the games schema for this appId
             game_schema = gs.get_schema_for_app_id(app_id)
             if game_schema:
-                print(f"Found schema for app_id {app_id}! Game identified as {gs.get_name_for_app_id(app_id)}")
+                console.log(f"[bold green]Found schema for app_id [blue]{app_id}[green]!\n"
+                              f"Game identified as [blue]{gs.get_name_for_app_id(app_id)}")
 
                 remote_saves = [ps.get_saves_root_for_platform("LINUX") \
                                     .replace("{user}", self.cp.deck_user) \
@@ -54,7 +57,8 @@ class SaveTool:
                     self.pull_save_files(save_pair[0], save_pair[1])
 
             else:
-                print(f"Unable to identify app_id {app_id}! Falling back to UNIDENTIFIED_GAME_SCHEMA")
+                console.log(f"[bold yellow]Unable to identify app_id [blue]{app_id}!\n"
+                            f"[yellow]Falling back to UNIDENTIFIED_GAME_SCHEMA")
 
         return 0
 
@@ -69,12 +73,12 @@ class SaveTool:
             else:
                 if not os.path.isfile(os.path.join(local_path, filename)) or self.client.stat(
                         remote_path + filename).st_mtime > os.path.getmtime(os.path.join(local_path, filename)):
-                    print(
-                        f"Remote file {remote_path + filename} is newer than local file {os.path.join(local_path, filename)}, pulling from remote...")
+                    console.log(
+                        f"[bold green]Remote file {remote_path + filename} is newer than local file {os.path.join(local_path, filename)}, pulling from remote...")
                     self.client.get(remote_path + filename, os.path.join(local_path, filename))
                 else:
-                    print(
-                        f"Remote file {remote_path + filename} is older than local file {os.path.join(local_path, filename)}, keeping local file...")
+                    console.log(
+                        f"[bold yellow]Remote file {remote_path + filename} is older than local file {os.path.join(local_path, filename)}, keeping local file...")
 
     def push_save_file(self, local_path, remote_path):
         self.client.put(local_path, remote_path)
