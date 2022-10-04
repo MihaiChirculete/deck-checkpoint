@@ -35,9 +35,11 @@ class SaveTool:
 
         with console.pager():
             for app_id in self.remote_appids:
-                console.rule(f"[bold magenta]Sync-ing save data for AppID [bold blue]{app_id}...")
                 # Search the games schema for this appId
                 game_schema = gs.get_schema_for_app_id(app_id)
+                console.rule(f"[bold magenta]Sync-ing save data for [blue]{gs.get_name_for_app_id(app_id)} (AppID {app_id})...")
+
+
                 if game_schema:
                     console.log(f"[bold green]Found schema for app_id [blue]{app_id}[green]!\n"
                                   f"Game identified as [blue]{gs.get_name_for_app_id(app_id)}")
