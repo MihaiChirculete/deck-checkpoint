@@ -24,7 +24,7 @@ class SaveTool:
 
     def pull_remote_saves(self):
         """
-        Pulls remote saves based on definde schemas
+        Pulls remote saves based on defined schemas
         :return:
         """
         if len(self.remote_appids) < 1:
@@ -33,32 +33,33 @@ class SaveTool:
         gs = self.sp.get_games_schema()
         ps = self.sp.get_platforms_schema()
 
-        for app_id in self.remote_appids:
-            console.rule(f"[bold magenta]Sync-ing save data for AppID [bold blue]{app_id}...")
-            # Search the games schema for this appId
-            game_schema = gs.get_schema_for_app_id(app_id)
-            if game_schema:
-                console.log(f"[bold green]Found schema for app_id [blue]{app_id}[green]!\n"
-                              f"Game identified as [blue]{gs.get_name_for_app_id(app_id)}")
+        with console.pager():
+            for app_id in self.remote_appids:
+                console.rule(f"[bold magenta]Sync-ing save data for AppID [bold blue]{app_id}...")
+                # Search the games schema for this appId
+                game_schema = gs.get_schema_for_app_id(app_id)
+                if game_schema:
+                    console.log(f"[bold green]Found schema for app_id [blue]{app_id}[green]!\n"
+                                  f"Game identified as [blue]{gs.get_name_for_app_id(app_id)}")
 
-                remote_saves = [ps.get_saves_root_for_platform("LINUX") \
-                                    .replace("{user}", self.cp.deck_user) \
-                                    .replace("{app_id}", app_id) + savePath for savePath in
-                                gs.get_save_paths_for_app_id(app_id)]
+                    remote_saves = [ps.get_saves_root_for_platform("LINUX") \
+                                        .replace("{user}", self.cp.deck_user) \
+                                        .replace("{app_id}", app_id) + savePath for savePath in
+                                    gs.get_save_paths_for_app_id(app_id)]
 
-                local_saves = [ps.get_saves_root_for_platform(self.cp.local_platform) \
-                                   .replace("{user}", pwd.getpwuid(os.getuid())[0]) \
-                                   .replace("{app_id}", app_id) + savePath for savePath in
-                               gs.get_save_paths_for_app_id(app_id)]
+                    local_saves = [ps.get_saves_root_for_platform(self.cp.local_platform) \
+                                       .replace("{user}", pwd.getpwuid(os.getuid())[0]) \
+                                       .replace("{app_id}", app_id) + savePath for savePath in
+                                   gs.get_save_paths_for_app_id(app_id)]
 
-                save_pairs = list(zip(remote_saves, local_saves))
+                    save_pairs = list(zip(remote_saves, local_saves))
 
-                for save_pair in save_pairs:
-                    self.pull_save_files(save_pair[0], save_pair[1])
+                    for save_pair in save_pairs:
+                        self.pull_save_files(save_pair[0], save_pair[1])
 
-            else:
-                console.log(f"[bold yellow]Unable to identify app_id [blue]{app_id}!\n"
-                            f"[yellow]Falling back to UNIDENTIFIED_GAME_SCHEMA")
+                else:
+                    console.log(f"[bold yellow]Unable to identify app_id [blue]{app_id}!\n"
+                                f"[yellow]Falling back to UNIDENTIFIED_GAME_SCHEMA")
 
         return 0
 
