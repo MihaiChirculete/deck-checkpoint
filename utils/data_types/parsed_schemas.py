@@ -61,7 +61,11 @@ class GamesSchema(ParsedSchemaBase):
         return self.get_schema_for_game_name(game_name)["excludedSavePaths"]
 
     def get_name_for_app_id(self, app_id: str):
-        return self.get_schema_for_app_id(app_id)["gameName"]
+        schema = self.get_schema_for_app_id(app_id)
+        if schema is not None:
+            return schema["gameName"]
+
+        return "Unidentified Game"
 
     def get_app_id_for_name(self, game_name: str):
         return self.get_schema_for_game_name(game_name)["appId"]
